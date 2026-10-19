@@ -1,8 +1,8 @@
-# web-elements
+# Web-Elements
 
 A modular collection of HTML5 & CSS3 components featuring micro-interactions and responsive layouts.
 
-[Live Demo](https://your-username.github.io/web-elements)
+[Live Demo](https://cantbeaverage.github.io/web-elements)
 
 ## Included Components
 - **Search:** Animated expandable search bar
