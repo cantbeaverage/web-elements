@@ -1,1 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optical Search | Advanced Glass</title>
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.015);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent: #60a5fa;
+            --mouse-x: 50%;
+            --mouse-y: 50%;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            background: #010409;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Deep background for refraction */
+        .bg-refraction {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 25% 25%, #1e40af 0%, transparent 45%),
+                radial-gradient(circle at 75% 75%, #7c3aed 0%, transparent 45%);
+            filter: blur(120px);
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .scene {
+            perspective: 1500px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 100px;
+        }
+
+        .search-slab {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            display: flex;
+            align-items: center;
+            padding: 15px 35px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(50px) saturate(250%) contrast(120%);
+            -webkit-backdrop-filter: blur(50px) saturate(250%);
+            border-radius: 100px;
+            border: 1px solid var(--glass-border);
+            
+            /* Physical Presence */
+            transform-style: preserve-3d;
+            transition: transform 0.08s cubic-bezier(0.1, 0, 0.1, 1);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Chromatic Aberration Edge */
+        .search-slab::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent, rgba(96,165,250,0.2));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        /* spotlight tracking */
+        .search-slab::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+                circle at var(--mouse-x) var(--mouse-y),
+                rgba(255, 255, 255, 0.12),
+                transparent 70%
+            );
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
+        .search-icon {
+            width: 24px;
+            height: 24px;
+            stroke: var(--accent);
+            margin-right: 20px;
+            transform: translateZ(40px);
+            filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.4));
+        }
+
+        .search-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            font-size: 20px;
+            letter-spacing: 0.5px;
+            transform: translateZ(25px);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.2);
+            font-style: italic;
+        }
+
+        /* Interaction states */
+        .search-slab:focus-within {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 50px 100px rgba(0, 0, 0, 0.8), 0 0 30px rgba(96, 165, 250, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-refraction"></div>
+
+    <div class="scene">
+        <div class="search-slab" id="searchSlab">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" class="search-input" placeholder="Search for anything..." spellcheck="false">
+        </div>
+    </div>
+
+    <script>
+        const slab = document.getElementById('searchSlab');
+
+        window.addEventListener('mousemove', (e) => {
+            const rect = slab.getBoundingClientRect();
+            
+            // Spotlight
+            const lx = e.clientX - rect.left;
+            const ly = e.clientY - rect.top;
+            slab.style.setProperty('--mouse-x', `${lx}px`);
+            slab.style.setProperty('--mouse-y', `${ly}px`);
+
+            // High-Sensitivity 3D Tilt
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            // Tightened sensitivity for an "advanced" feel
+            const rotateX = (centerY - e.clientY) / 15; 
+            const rotateY = (e.clientX - centerX) / 30;
+
+            slab.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        // Spring reset
+        window.addEventListener('mouseleave', () => {
+            slab.style.transition = "transform 0.8s cubic-bezier(0.23, 1, 0.32, 1)";
+            slab.style.transform = `rotateX(0deg) rotateY(0deg)`;
+            
+            setTimeout(() => {
+                slab.style.transition = "transform 0.08s cubic-bezier(0.1, 0, 0.1, 1)";
+            }, 800);
+        });
+    </script>
+</body>
+</html>
 
