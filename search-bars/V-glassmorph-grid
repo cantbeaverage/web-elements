@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber-Pulse Glass Search</title>
+    <style>
+        :root {
+            --bg-void: #030308;
+            --glass-base: rgba(13, 16, 27, 0.55);
+            --neon-magenta: #ff007f;
+            --neon-cyan: #00f3ff;
+            --neon-violet: #7928ca;
+            --glow-cyan: rgba(0, 243, 255, 0.4);
+            --text-main: #f1f5f9;
+            --text-sub: #64748b;
+            --cursor-x: 50%;
+            --cursor-y: 50%;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 100vh;
+            background-color: var(--bg-void);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Animated Holographic Aurora Grid */
+        .cyber-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(circle at 50% 50%, black 30%, transparent 80%);
+            -webkit-mask-image: radial-gradient(circle at 50% 50%, black 30%, transparent 80%);
+            z-index: 0;
+        }
+
+        .aurora-blur {
+            position: absolute;
+            inset: -30%;
+            background: 
+                radial-gradient(circle at 25% 35%, var(--neon-magenta) 0%, transparent 45%),
+                radial-gradient(circle at 75% 65%, var(--neon-cyan) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, var(--neon-violet) 0%, transparent 55%);
+            filter: blur(100px);
+            opacity: 0.25;
+            z-index: 0;
+            animation: shift-aurora 15s ease-in-out infinite alternate;
+        }
+
+        @keyframes shift-aurora {
+            0% { transform: rotate(0deg) scale(1); }
+            100% { transform: rotate(8deg) scale(1.1); }
+        }
+
+        .scene {
+            perspective: 1000px;
+            width: 100%;
+            max-width: 650px;
+            padding: 20px;
+            z-index: 1;
+        }
+
+        /* Reactive Multi-Layer Glass Container */
+        .glass-chassis {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            background: var(--glass-base);
+            backdrop-filter: blur(35px) saturate(240%);
+            -webkit-backdrop-filter: blur(35px) saturate(240%);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform-style: preserve-3d;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Dynamic Reactive Glow Border */
+        .glass-chassis::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: radial-gradient(
+                400px circle at var(--cursor-x) var(--cursor-y),
+                var(--neon-cyan),
+                var(--neon-magenta) 40%,
+                transparent 80%
+            );
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+
+        .search-icon-wrapper {
+            position: relative;
+            margin-right: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translateZ(25px);
+            flex-shrink: 0;
+        }
+
+        .search-icon {
+            width: 22px;
+            height: 22px;
+            stroke: var(--text-sub);
+            transition: stroke 0.3s ease, filter 0.3s ease;
+        }
+
+        .search-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-main);
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            transform: translateZ(30px);
+            z-index: 2;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-sub);
+            opacity: 0.8;
+        }
+
+        /* Interactive Mode Switcher */
+        .mode-selector {
+            display: flex;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transform: translateZ(20px);
+            margin-left: 12px;
+        }
+
+        .mode-btn {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-sub);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .mode-btn:hover {
+            color: var(--text-main);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, var(--neon-magenta), var(--neon-violet));
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(255, 0, 127, 0.4);
+        }
+
+        /* Focus State Interactions */
+        .glass-chassis:focus-within {
+            border-color: rgba(0, 243, 255, 0.3);
+            box-shadow: 
+                0 30px 70px rgba(0, 0, 0, 0.8),
+                0 0 30px var(--glow-cyan),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        .glass-chassis:focus-within .search-icon {
+            stroke: var(--neon-cyan);
+            filter: drop-shadow(0 0 8px var(--neon-cyan));
+        }
+
+        .glass-chassis:focus-within::before {
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+            .mode-selector {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cyber-grid"></div>
+    <div class="aurora-blur"></div>
+
+    <main class="scene">
+        <div class="glass-chassis" id="glassChassis">
+            <div class="search-icon-wrapper">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </div>
+
+            <input type="text" class="search-input" id="searchInput" placeholder="Search the system grid..." spellcheck="false" autocomplete="off">
+
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="web">WEB</button>
+                <button class="mode-btn" data-mode="node">NODE</button>
+                <button class="mode-btn" data-mode="ai">AI</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const chassis = document.getElementById('glassChassis');
+        const input = document.getElementById('searchInput');
+        const modeBtns = document.querySelectorAll('.mode-btn');
+
+        let targetX = 0, targetY = 0;
+        let currentX = 0, currentY = 0;
+        let isHovered = false;
