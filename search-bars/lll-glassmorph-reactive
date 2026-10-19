@@ -1,0 +1,232 @@
+# Created by cantbeaverage
+# You must make it functional!
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floating Optical Pod | Glass UI</title>
+    <style>
+        :root {
+            --bg-deep: #080a10;
+            --glass-surface: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --neon-cyan: #38bdf8;
+            --neon-purple: #c084fc;
+            --neon-pink: #f472b6;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 100vh;
+            background-color: var(--bg-deep);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            overflow: hidden;
+            color: var(--text-primary);
+        }
+
+        /* Animated Mesh Gradient Background */
+        .ambient-mesh {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(192, 132, 252, 0.12) 40%, rgba(244, 114, 182, 0.08) 70%, transparent 100%);
+            filter: blur(60px);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: float-mesh 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes float-mesh {
+            0% { transform: translate(-10%, -10%) scale(1); }
+            100% { transform: translate(10%, 10%) scale(1.15); }
+        }
+
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            padding: 20px;
+            z-index: 1;
+        }
+
+        /* Outer Glow Frame */
+        .pod-wrapper {
+            position: relative;
+            border-radius: 28px;
+            padding: 1px;
+            background: linear-gradient(135deg, var(--glass-border), rgba(255, 255, 255, 0.02));
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .pod-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 30px;
+            background: conic-gradient(from 0deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink), var(--neon-cyan));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+            filter: blur(10px);
+        }
+
+        /* Active Search Pod */
+        .search-pod {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px 10px 20px;
+            background: var(--glass-surface);
+            backdrop-filter: blur(32px) saturate(200%);
+            -webkit-backdrop-filter: blur(32px) saturate(200%);
+            border-radius: 27px;
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            transition: transform 0.2s ease, background 0.3s ease;
+        }
+
+        .search-pod:active {
+            transform: scale(0.995);
+        }
+
+        /* Lens / Search Icon */
+        .lens-icon {
+            width: 20px;
+            height: 20px;
+            stroke: var(--text-secondary);
+            transition: stroke 0.3s ease, transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        /* Search Field */
+        .pod-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 1.05rem;
+            font-weight: 400;
+        }
+
+        .pod-input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+
+        /* Quick Scope Chips */
+        .filter-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .scope-chip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .scope-chip:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .scope-chip.active {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: rgba(56, 189, 248, 0.4);
+            color: var(--neon-cyan);
+        }
+
+        /* Focused States */
+        .search-container:focus-within .pod-wrapper::before {
+            opacity: 0.6;
+        }
+
+        .search-container:focus-within .pod-wrapper {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
+        }
+
+        .search-container:focus-within .lens-icon {
+            stroke: var(--neon-cyan);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 580px) {
+            .filter-group {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-mesh"></div>
+
+    <div class="search-container">
+        <div class="pod-wrapper">
+            <div class="search-pod">
+                <svg class="lens-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                
+                <input type="text" class="pod-input" id="podInput" placeholder="Type to search..." spellcheck="false" autocomplete="off">
+
+                <div class="filter-group">
+                    <span class="scope-chip active">All</span>
+                    <span class="scope-chip">Code</span>
+                    <span class="scope-chip">Docs</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chips = document.querySelectorAll('.scope-chip');
+        const input = document.getElementById('podInput');
+
+        // Scope Tag Selection
+        chips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                chips.forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                input.focus();
+            });
+        });
+
+        // Subtle Tilt / Follow Cursor Effect
+        const podWrapper = document.querySelector('.pod-wrapper');
+
+        window.addEventListener('mousemove', (e) => {
+            const rect = podWrapper.getBoundingClientRect();
+            const x = e.clientX - (rect.left + rect.width / 2);
+            const y = e.clientY - (rect.top + rect.height / 2);
+
+            podWrapper.style.transform = `translate3d(${x * 0.03}px, ${y * 0.03}px, 0)`;
+        });
+    </script>
+</body>
+</html>
